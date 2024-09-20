@@ -1,0 +1,71 @@
+---
+title: "p8105_hw1_kx2224"
+author: "Kangyu Xu (kx2224)"
+date: "2024-09-18"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+## Question 1
+### Load the data
+```{r}
+data("penguins", package = "palmerpenguins") 
+```
+### Short Description
+The `penguins` dataset contains information about different species of penguins, including variables such as `species`, `island`, `bill_length_mm`, `bill_depth_mm`, `flipper_length_mm`, `body_mass_g`, `sex` and `year`. The dataset consists of `r nrow(penguins)` rows and `r ncol(penguins)` columns. The mean flipper length of the penguins is `r mean(penguins$flipper_length_mm, na.rm = TRUE)` mm.
+
+### Make a scatterplot
+```{r}
+library(ggplot2)
+firstScatterPlot = ggplot(data = penguins, aes(x = bill_length_mm, y = flipper_length_mm, colour = species))+
+  geom_point(na.rm = TRUE)+
+  labs(title = "Scatter Plot of Flipper_length_mm (y) vs Bill_length_mm (x)")
+```
+
+### Save the plot
+```{r}
+ggsave("Scatter Plot of Flipper_length_mm (y) vs Bill_length_mm (x).jpg", plot = firstScatterPlot)
+```
+
+## Question 2
+### Create the dataframe
+```{r}
+library(tidyverse)
+set.seed(42)
+randomSample = rnorm(10)
+logicVector = randomSample>0
+charVector = sample(letters, 10, replace = TRUE)
+factorVector = sample(c("level1","level2","level3"), 10, replace = TRUE)
+df = data.frame(randomSample, logicVector, charVector, factorVector)
+df
+```
+### Calculate the mean of variables
+```{r}
+mean_randomSample = mean(df %>% pull(randomSample))
+mean_logicVector = mean(df %>% pull(logicVector))
+mean_charVector = try(mean(df %>% pull(charVector)), silent = TRUE) 
+mean_factorVector = try(mean(df %>% pull(factorVector)), silent = TRUE) 
+
+# output the result
+print(mean_randomSample)
+print(mean_logicVector)
+print(mean_charVector)
+print(mean_factorVector)
+```
+In conclusion, we can take the mean of "numeric" and "logical vector". But for "character" and "factor", the R cannot calculate the mean of them.
+
+### Convert variables
+```{r}
+numeric_logical = as.numeric(logicVector)
+numeric_character = try(as.numeric(charVector), silent = TRUE)
+numeric_factor = try(as.numeric(factorVector), silent = TRUE)
+
+# output the result
+print(numeric_logical)
+print(numeric_character)
+print(numeric_factor)
+```
+The result of conversion is that we succeeded to convert logical vector, but we failed to convert both factors and charactors. The reason is that logical values are coerced to 1 (TRUE) and 0 (FALSE), so this conversion works. But for characters and factors, they cannot be directly converted to numerics, so the result will be NA as showed above.
+
+This result can help explain why we could only take the mean of logical vectors. 
