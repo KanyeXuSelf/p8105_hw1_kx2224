@@ -2,10 +2,7 @@
 title: "p8105_hw1_kx2224"
 author: "Kangyu Xu (kx2224)"
 date: "2024-09-18"
-output:
-  pdf_document: default
-  html_document:
-    df_print: paged
+output: github_document
 ---
 ## Question 1
 ### Load the data
@@ -36,7 +33,7 @@ set.seed(42)
 randomSample = rnorm(10)
 logicVector = randomSample>0
 charVector = sample(letters, 10, replace = TRUE)
-factorVector = sample(c("level1","level2","level3"), 10, replace = TRUE)
+factorVector =  factor(sample(c("low", "mid", "high"), 10, replace = TRUE))
 df = data.frame(randomSample, logicVector, charVector, factorVector)
 df
 ```
@@ -57,15 +54,15 @@ In conclusion, we can take the mean of "numeric" and "logical vector". But for "
 
 ### Convert variables
 ```{r}
-numeric_logical = as.numeric(logicVector)
-numeric_character = try(as.numeric(charVector), silent = TRUE)
-numeric_factor = try(as.numeric(factorVector), silent = TRUE)
+numeric_logical = try(as.numeric(df %>% pull(logicVector)), silent = TRUE)
+numeric_character = try(as.numeric(df %>% pull(charVector)), silent = TRUE)
+numeric_factor = try(as.numeric(df %>% pull(factorVector)), silent = TRUE)
 
 # output the result
 print(numeric_logical)
 print(numeric_character)
 print(numeric_factor)
 ```
-The result of conversion is that we succeeded to convert logical vector, but we failed to convert both factors and charactors. The reason is that logical values are coerced to 1 (TRUE) and 0 (FALSE), so this conversion works. But for characters and factors, they cannot be directly converted to numerics, so the result will be NA as showed above.
+The result of conversion is that we succeeded to convert logical vector and factor vector, but we failed to convert charactors. The reason is that logical values are coerced to 1 (TRUE) and 0 (FALSE), so this conversion works. But for characters, they cannot be directly converted to numerics, so the result will be NA as showed above. Then, for factors, they can be converted into numeric but cannot be calculated as the numerical value.
 
 This result can help explain why we could only take the mean of logical vectors. 
